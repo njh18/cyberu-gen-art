@@ -153,6 +153,7 @@ with open(METADATA_FILE_NAME, 'w') as outfile:
 # Generate Image
 for item in all_images:
 
+    # Combine layers
     im1 = Image.open(f'./layers/background/{background_files[item["Background"]]}.png').convert('RGBA')
     im2 = Image.open(f'./layers/midground/{midground_files[item["Midground"]]}.png').convert('RGBA')
     im3 = Image.open(f'./layers/base/{base_files[item["Base"]]}.png').convert('RGBA')
