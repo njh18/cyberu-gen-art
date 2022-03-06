@@ -14,17 +14,20 @@ midground = ["0","1"]
 midground_weights = [50,50]
 
 base = ["1","2","3"]
-base_weights = [50,25,25]
+base_weights = [33,33,33]
+
+
+# TODO: add clothes and eye lashes
 
 hair = ["1","2","3"]
-hair_weights = [25,50,50]
+hair_weights = [33,33,33]
 
+eyelash = ["0","1"]
+eyelash_weights = [50,50]
 
-# circle = ["Blue", "Orange"] 
-# circle_weights = [30, 70]
+clothes = ["1", "2","3","4","5"] 
+clothes_weights = [20, 20, 20, 20, 20]
 
-# square = ["Blue","Orange"] 
-# square_weights = [30, 70]
 
 
 # Dictionary variable for each trait. 
@@ -56,21 +59,22 @@ hair_files = {
     "3":"hair_3"
 }
 
+eyelash_files = {
+    "0":"",
+    "1":"eyelash"
+}
+
+clothes_files = {
+    "1": "clothes_1",
+    "2": "clothes_2",
+    "3": "clothes_3",
+    "4": "clothes_4",
+    "5": "clothes_5"
+}
 
 
 
-# square_files = {
-#     "Blue": "blue-square",
-#     "Orange": "orange-square",     
-# }
-
-# circle_files = {
-#     "Blue": "blue-circle",
-#     "Orange": "orange-circle", 
-# }
-
-
-TOTAL_IMAGES = 15 # Number of random unique images we want to generate ( 5 x 1 x 3 x 3 = 15)
+TOTAL_IMAGES = 15 # Number of random unique images we want to generate ( 5 x 2 x 3 x 3 x 2 x 5= 50)
 
 all_images = [] 
 
@@ -83,8 +87,8 @@ def create_new_image():
     new_image ["Midground"] = random.choices(midground, midground_weights)[0]
     new_image ["Base"] = random.choices(base, base_weights)[0]
     new_image ["Hair"] = random.choices(hair, hair_weights)[0]
-    # new_image ["Circle"] = random.choices(circle, circle_weights)[0]
-    # new_image ["Square"] = random.choices(square, square_weights)[0]
+    new_image ["Eyelash"] = random.choices(eyelash, eyelash_weights)[0]
+    new_image ["Clothes"] = random.choices(clothes, clothes_weights)[0]
 
     if new_image in all_images:
         return create_new_image()
@@ -100,6 +104,7 @@ for i in range(TOTAL_IMAGES):
     all_images.append(new_trait_image)
 
 
+# TODO: check if unique before compiling
 # Check if images are unique
 def all_images_unique(all_images):
     seen = list()
@@ -131,6 +136,14 @@ hair_count = {}
 for item in hair:
     hair_count[item] = 0
 
+eyelash_count = {}
+for item in eyelash:
+    eyelash_count[item] = 0
+
+clothes_count = {}
+for item in hair:
+    clothes_count[item] = 0
+
 
 
 for image in all_images:
@@ -138,12 +151,16 @@ for image in all_images:
     midground_count[image["Midground"]] +=1
     base_count[image["Base"]] +=1
     hair_count[image["Hair"]] +=1
+    eyelash_count[image["Eyelash"]] += 1
+    clothes_count[image["Clothes"]] += 1
 
 
 print(background_count)
 print(midground_count)
 print(base_count)
 print(hair_count)
+print(eyelash_count)
+print(clothes_count)
 
 # Generate metadata
 METADATA_FILE_NAME = './metadata/all-traits.json'; 
@@ -163,6 +180,13 @@ for item in all_images:
     im3 = Image.open(f'./layers/base/{base_files[item["Base"]]}.png').convert('RGBA')
     im4 = Image.open(f'./layers/hair/{hair_files[item["Hair"]]}.png').convert('RGBA')
 
+    try:
+        im5 = Image.open(f'./layers/eyelash/{eyelash_files[item["Eyelash"]]}.png').convert('RGBA')
+    except FileNotFoundError:
+        im5 = ""
+
+    im6 = Image.open(f'./layers/clothes/{clothes_files[item["Clothes"]]}.png').convert('RGBA')
+
     #Create each composite
     if im2 != "":
         com1 = Image.alpha_composite(im1, im2)
@@ -170,6 +194,11 @@ for item in all_images:
         com1 = im1
     com2 = Image.alpha_composite(com1, im3)
     com3 = Image.alpha_composite(com2, im4)
+    if im5 != "":
+        com4 = Image.alpha_composite(com3,im5)
+    else:
+        com4 = com3
+    com5 = Image.alpha_composite(com4,im6)
 
     #Convert to RGB
     rgb_im = com3.convert('RGB')
@@ -202,6 +231,8 @@ for i in data:
     token["attributes"].append(getAttribute("Midground", i["Midground"]))
     token["attributes"].append(getAttribute("Base", i["Base"]))
     token["attributes"].append(getAttribute("Hair", i["Hair"]))
+    token["attributes"].append(getAttribute("Eyelash", i["Eyelash"]))
+    token["attributes"].append(getAttribute("Clothes", i["Clothes"]))
 
     with open('./metadata/' + str(token_id), 'w') as outfile:
         json.dump(token, outfile, indent=4)
