@@ -7,14 +7,24 @@ import json
 # Each image is made up a series of traits
 # The weightings for each trait drive the rarity and add up to 100%
 
-background = ["Blue", "Orange"] 
-background_weights = [30, 70]
+background = ["1", "2","3","4","5"] 
+background_weights = [20, 20, 20, 20, 20]
 
-circle = ["Blue", "Orange"] 
-circle_weights = [30, 70]
+midground = ["1"]
+midground_weights = [100]
 
-square = ["Blue","Orange"] 
-square_weights = [30, 70]
+base = ["1","2","3"]
+base_weights = [50,25,25]
+
+hair = ["1","2","3"]
+hair_weights = [25,50,50]
+
+
+# circle = ["Blue", "Orange"] 
+# circle_weights = [30, 70]
+
+# square = ["Blue","Orange"] 
+# square_weights = [30, 70]
 
 
 # Dictionary variable for each trait. 
@@ -22,22 +32,44 @@ square_weights = [30, 70]
 # Add more shapes and colours as you wish
 
 background_files = {
-    "Blue": "blue",
-    "Orange": "orange",
+    "1": "background_1",
+    "2": "background_2",
+    "3": "background_3",
+    "4": "background_4",
+    "5": "background_5"
 }
 
-square_files = {
-    "Blue": "blue-square",
-    "Orange": "orange-square",     
+midground_files = {
+    "1":"midground"
 }
 
-circle_files = {
-    "Blue": "blue-circle",
-    "Orange": "orange-circle", 
+base_files = {
+    "1": "base_1",
+    "2": "base_2",
+    "3": "base_3"
+}
+
+hair_files = {
+    "1":"hair_1",
+    "2":"hair_2",
+    "3":"hair_3"
 }
 
 
-TOTAL_IMAGES = 8 # Number of random unique images we want to generate ( 2 x 2 x 2 = 8)
+
+
+# square_files = {
+#     "Blue": "blue-square",
+#     "Orange": "orange-square",     
+# }
+
+# circle_files = {
+#     "Blue": "blue-circle",
+#     "Orange": "orange-circle", 
+# }
+
+
+TOTAL_IMAGES = 15 # Number of random unique images we want to generate ( 5 x 1 x 3 x 3 = 15)
 
 all_images = [] 
 
@@ -47,8 +79,11 @@ def create_new_image():
 
     # For each trait category, select a random trait based on the weightings 
     new_image ["Background"] = random.choices(background, background_weights)[0]
-    new_image ["Circle"] = random.choices(circle, circle_weights)[0]
-    new_image ["Square"] = random.choices(square, square_weights)[0]
+    new_image ["Midground"] = random.choices(midground, midground_weights)[0]
+    new_image ["Base"] = random.choices(base, base_weights)[0]
+    new_image ["Hair"] = random.choices(hair, hair_weights)[0]
+    # new_image ["Circle"] = random.choices(circle, circle_weights)[0]
+    # new_image ["Square"] = random.choices(square, square_weights)[0]
 
     if new_image in all_images:
         return create_new_image()
@@ -78,27 +113,36 @@ for item in all_images:
     i = i + 1
 
 
-# Get traits count
+# Get traits count 
 background_count = {}
 for item in background:
     background_count[item] = 0
 
-circle_count = {}
-for item in circle:
-    circle_count[item] = 0
+midground_count = {}
+for item in midground:
+    midground_count[item] = 0
 
-square_count = {}
-for item in square:
-    square_count[item] = 0
+base_count = {}
+for item in base:
+    base_count[item] = 0
+
+hair_count = {}
+for item in hair:
+    hair_count[item] = 0
+
+
 
 for image in all_images:
     background_count[image["Background"]] += 1
-    circle_count[image["Circle"]] += 1
-    square_count[image["Square"]] += 1
+    midground_count[image["Midground"]] +=1
+    base_count[image["Base"]] +=1
+    hair_count[image["Hair"]] +=1
+
 
 print(background_count)
-print(circle_count)
-print(square_count)
+print(midground_count)
+print(base_count)
+print(hair_count)
 
 # Generate metadata
 METADATA_FILE_NAME = './metadata/all-traits.json'; 
@@ -109,16 +153,18 @@ with open(METADATA_FILE_NAME, 'w') as outfile:
 # Generate Image
 for item in all_images:
 
-    im1 = Image.open(f'./layers/backgrounds/{background_files[item["Background"]]}.jpg').convert('RGBA')
-    im2 = Image.open(f'./layers/circles/{circle_files[item["Circle"]]}.png').convert('RGBA')
-    im3 = Image.open(f'./layers/squares/{square_files[item["Square"]]}.png').convert('RGBA')
+    im1 = Image.open(f'./layers/background/{background_files[item["Background"]]}.jpg').convert('RGBA')
+    im2 = Image.open(f'./layers/midground/{circle_files[item["Midground"]]}.png').convert('RGBA')
+    im3 = Image.open(f'./layers/base/{square_files[item["Base"]]}.png').convert('RGBA')
+    im4 = Image.open(f'./layers/hair/{square_files[item["Hair"]]}.png').convert('RGBA')
 
     #Create each composite
     com1 = Image.alpha_composite(im1, im2)
     com2 = Image.alpha_composite(com1, im3)
+    com3 = Image.alpha_composite(com2, im4)
 
     #Convert to RGB
-    rgb_im = com2.convert('RGB')
+    rgb_im = com3.convert('RGB')
     file_name = str(item["tokenId"]) + ".png"
     rgb_im.save("./images/" + file_name)
 
@@ -127,8 +173,8 @@ for item in all_images:
 f = open('./metadata/all-traits.json',) 
 data = json.load(f)
 
-IMAGES_BASE_URI = "ADD_IMAGES_BASE_URI_HERE"
-PROJECT_NAME = "ADD_PROJECT_NAME_HERE"
+IMAGES_BASE_URI = "baseurl/"
+PROJECT_NAME = "Cyberu"
 
 
 def getAttribute(key, value):
@@ -145,8 +191,9 @@ for i in data:
         "attributes": []
     }
     token["attributes"].append(getAttribute("Background", i["Background"]))
-    token["attributes"].append(getAttribute("Circle", i["Circle"]))
-    token["attributes"].append(getAttribute("Square", i["Square"]))
+    token["attributes"].append(getAttribute("Midground", i["Midground"]))
+    token["attributes"].append(getAttribute("Base", i["Base"]))
+    token["attributes"].append(getAttribute("Hair", i["Hair"]))
 
     with open('./metadata/' + str(token_id), 'w') as outfile:
         json.dump(token, outfile, indent=4)
