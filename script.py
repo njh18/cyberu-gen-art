@@ -1,43 +1,153 @@
-# Global variables
-variations = 3 # number of variations for each trait
-images_count = 10 # total number of images
-layers = 3 # number of traits
+from PIL import Image 
+from IPython.display import display 
+import random
+import json
 
 
-#Function to generate a filename, with number of characters same to 
-#number of layers, each character is a number, randomly selected 
-#from 1 to the number of variations in each layer.
-def generate_filename():
-    name=””
-    for i in range(layers):
-         name=name+str(randint(1,variations))
-    return name#List that will contain the filenames.files=[]
+# Each image is made up a series of traits
+# The weightings for each trait drive the rarity and add up to 100%
 
-#Now dependent on how many images we want, we call the function to
-#generate a filename and add it to out list if a similar filename 
-#doesnt exist, this way we make sure all filenames are unique.
-for i in range(images_count):
-    name=generate_filename()
-    if name not in files:
-         files.append(name) 
-         
+background = ["Blue", "Orange"] 
+background_weights = [30, 70]
 
-from PIL import Image
-from IPython.display import display
+circle = ["Blue", "Orange"] 
+circle_weights = [30, 70]
+
+square = ["Blue","Orange"] 
+square_weights = [30, 70]
 
 
-for item in files:
-# loading the image from each layer
-    layer1=Image.open(f’./1/{item[0]}.png’).convert(‘RGBA’)
-    layer2=Image.open(f’./2/{item[1]}.png’).convert(‘RGBA’)
-    layer3=Image.open(f’./3/{item[2]}.png’).convert(‘RGBA’)
+# Dictionary variable for each trait. 
+# Eech trait corresponds to its file name
+# Add more shapes and colours as you wish
 
-# Now combining the layers
- 
-    com1 = Image.alpha_composite(layer1, layer2)
-    com2 = Image.alpha_composite(com1, layer3)
- 
-    rgb_im = com2.convert(‘RGB’)
-    file_name = item + “.png”
-    rgb_im.save(“./images/” + file_name)
+background_files = {
+    "Blue": "blue",
+    "Orange": "orange",
+}
 
+square_files = {
+    "Blue": "blue-square",
+    "Orange": "orange-square",     
+}
+
+circle_files = {
+    "Blue": "blue-circle",
+    "Orange": "orange-circle", 
+}
+
+
+TOTAL_IMAGES = 8 # Number of random unique images we want to generate ( 2 x 2 x 2 = 8)
+
+all_images = [] 
+
+def create_new_image():
+
+    new_image = {} #
+
+    # For each trait category, select a random trait based on the weightings 
+    new_image ["Background"] = random.choices(background, background_weights)[0]
+    new_image ["Circle"] = random.choices(circle, circle_weights)[0]
+    new_image ["Square"] = random.choices(square, square_weights)[0]
+
+    if new_image in all_images:
+        return create_new_image()
+    else:
+        return new_image
+
+
+# Generate the unique combinations based on trait weightings
+for i in range(TOTAL_IMAGES): 
+
+    new_trait_image = create_new_image()
+
+    all_images.append(new_trait_image)
+
+
+# Check if images are unique
+def all_images_unique(all_images):
+    seen = list()
+    return not any(i in seen or seen.append(i) for i in all_images)
+
+print("Are all images unique?", all_images_unique(all_images))
+
+# Add token id to each image
+i = 0
+for item in all_images:
+    item["tokenId"] = i
+    i = i + 1
+
+
+# Get traits count
+background_count = {}
+for item in background:
+    background_count[item] = 0
+
+circle_count = {}
+for item in circle:
+    circle_count[item] = 0
+
+square_count = {}
+for item in square:
+    square_count[item] = 0
+
+for image in all_images:
+    background_count[image["Background"]] += 1
+    circle_count[image["Circle"]] += 1
+    square_count[image["Square"]] += 1
+
+print(background_count)
+print(circle_count)
+print(square_count)
+
+# Generate metadata
+METADATA_FILE_NAME = './metadata/all-traits.json'; 
+with open(METADATA_FILE_NAME, 'w') as outfile:
+    json.dump(all_images, outfile, indent=4)
+
+
+# Generate Image
+for item in all_images:
+
+    im1 = Image.open(f'./layers/backgrounds/{background_files[item["Background"]]}.jpg').convert('RGBA')
+    im2 = Image.open(f'./layers/circles/{circle_files[item["Circle"]]}.png').convert('RGBA')
+    im3 = Image.open(f'./layers/squares/{square_files[item["Square"]]}.png').convert('RGBA')
+
+    #Create each composite
+    com1 = Image.alpha_composite(im1, im2)
+    com2 = Image.alpha_composite(com1, im3)
+
+    #Convert to RGB
+    rgb_im = com2.convert('RGB')
+    file_name = str(item["tokenId"]) + ".png"
+    rgb_im.save("./images/" + file_name)
+
+
+# Generate Metadata for each image
+f = open('./metadata/all-traits.json',) 
+data = json.load(f)
+
+IMAGES_BASE_URI = "ADD_IMAGES_BASE_URI_HERE"
+PROJECT_NAME = "ADD_PROJECT_NAME_HERE"
+
+
+def getAttribute(key, value):
+    return {
+        "trait_type": key,
+        "value": value
+    }
+for i in data:
+    token_id = i['tokenId']
+    token = {
+        "image": IMAGES_BASE_URI + str(token_id) + '.png',
+        "tokenId": token_id,
+        "name": PROJECT_NAME + ' ' + str(token_id),
+        "attributes": []
+    }
+    token["attributes"].append(getAttribute("Background", i["Background"]))
+    token["attributes"].append(getAttribute("Circle", i["Circle"]))
+    token["attributes"].append(getAttribute("Square", i["Square"]))
+
+    with open('./metadata/' + str(token_id), 'w') as outfile:
+        json.dump(token, outfile, indent=4)
+f.close()
