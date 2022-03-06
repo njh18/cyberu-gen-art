@@ -10,8 +10,8 @@ import json
 background = ["1", "2","3","4","5"] 
 background_weights = [20, 20, 20, 20, 20]
 
-midground = ["1"]
-midground_weights = [100]
+midground = ["0","1"]
+midground_weights = [50,50]
 
 base = ["1","2","3"]
 base_weights = [50,25,25]
@@ -40,6 +40,7 @@ background_files = {
 }
 
 midground_files = {
+    "0": ""
     "1":"midground"
 }
 
@@ -155,7 +156,10 @@ for item in all_images:
 
     # Combine layers
     im1 = Image.open(f'./layers/background/{background_files[item["Background"]]}.png').convert('RGBA')
-    im2 = Image.open(f'./layers/midground/{midground_files[item["Midground"]]}.png').convert('RGBA')
+    try:
+        im2 = Image.open(f'./layers/midground/{midground_files[item["Midground"]]}.png').convert('RGBA')
+    catch FileNotFoundError:
+        im2 = ""
     im3 = Image.open(f'./layers/base/{base_files[item["Base"]]}.png').convert('RGBA')
     im4 = Image.open(f'./layers/hair/{hair_files[item["Hair"]]}.png').convert('RGBA')
 
