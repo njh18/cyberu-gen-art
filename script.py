@@ -40,7 +40,7 @@ background_files = {
 }
 
 midground_files = {
-    "0": ""
+    "0": "",
     "1":"midground"
 }
 
@@ -158,13 +158,16 @@ for item in all_images:
     im1 = Image.open(f'./layers/background/{background_files[item["Background"]]}.png').convert('RGBA')
     try:
         im2 = Image.open(f'./layers/midground/{midground_files[item["Midground"]]}.png').convert('RGBA')
-    catch FileNotFoundError:
+    except FileNotFoundError:
         im2 = ""
     im3 = Image.open(f'./layers/base/{base_files[item["Base"]]}.png').convert('RGBA')
     im4 = Image.open(f'./layers/hair/{hair_files[item["Hair"]]}.png').convert('RGBA')
 
     #Create each composite
-    com1 = Image.alpha_composite(im1, im2)
+    if im2 != "":
+        com1 = Image.alpha_composite(im1, im2)
+    else:
+        com1 = im1
     com2 = Image.alpha_composite(com1, im3)
     com3 = Image.alpha_composite(com2, im4)
 

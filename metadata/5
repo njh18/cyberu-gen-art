@@ -1,0 +1,23 @@
+{
+    "image": "baseurl/5.png",
+    "tokenId": 5,
+    "name": "Cyberu 5",
+    "attributes": [
+        {
+            "trait_type": "Background",
+            "value": "1"
+        },
+        {
+            "trait_type": "Midground",
+            "value": "0"
+        },
+        {
+            "trait_type": "Base",
+            "value": "2"
+        },
+        {
+            "trait_type": "Hair",
+            "value": "2"
+        }
+    ]
+}

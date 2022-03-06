@@ -1,0 +1,107 @@
+[
+    {
+        "Background": "2",
+        "Midground": "1",
+        "Base": "2",
+        "Hair": "3",
+        "tokenId": 0
+    },
+    {
+        "Background": "3",
+        "Midground": "1",
+        "Base": "2",
+        "Hair": "3",
+        "tokenId": 1
+    },
+    {
+        "Background": "1",
+        "Midground": "1",
+        "Base": "1",
+        "Hair": "3",
+        "tokenId": 2
+    },
+    {
+        "Background": "2",
+        "Midground": "1",
+        "Base": "1",
+        "Hair": "2",
+        "tokenId": 3
+    },
+    {
+        "Background": "3",
+        "Midground": "1",
+        "Base": "1",
+        "Hair": "3",
+        "tokenId": 4
+    },
+    {
+        "Background": "1",
+        "Midground": "0",
+        "Base": "2",
+        "Hair": "2",
+        "tokenId": 5
+    },
+    {
+        "Background": "4",
+        "Midground": "0",
+        "Base": "2",
+        "Hair": "2",
+        "tokenId": 6
+    },
+    {
+        "Background": "4",
+        "Midground": "1",
+        "Base": "3",
+        "Hair": "3",
+        "tokenId": 7
+    },
+    {
+        "Background": "2",
+        "Midground": "1",
+        "Base": "3",
+        "Hair": "3",
+        "tokenId": 8
+    },
+    {
+        "Background": "5",
+        "Midground": "1",
+        "Base": "3",
+        "Hair": "1",
+        "tokenId": 9
+    },
+    {
+        "Background": "5",
+        "Midground": "0",
+        "Base": "1",
+        "Hair": "3",
+        "tokenId": 10
+    },
+    {
+        "Background": "5",
+        "Midground": "1",
+        "Base": "3",
+        "Hair": "2",
+        "tokenId": 11
+    },
+    {
+        "Background": "2",
+        "Midground": "1",
+        "Base": "2",
+        "Hair": "2",
+        "tokenId": 12
+    },
+    {
+        "Background": "3",
+        "Midground": "1",
+        "Base": "1",
+        "Hair": "1",
+        "tokenId": 13
+    },
+    {
+        "Background": "2",
+        "Midground": "0",
+        "Base": "1",
+        "Hair": "3",
+        "tokenId": 14
+    }
+]
